@@ -1,4 +1,4 @@
-module github.com/bodgit/ntlmssp
+module github.com/LeakIX/ntlmssp
 
 go 1.12
 
