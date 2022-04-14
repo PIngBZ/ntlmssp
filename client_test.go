@@ -250,11 +250,13 @@ func TestClientProcessChallengeMessage(t *testing.T) {
 	}
 
 	for _, table := range tables {
-		got, err := table.client.processChallengeMessage(table.challengeMessage, table.channelBindings)
+		cm, am, got, err := table.client.processChallengeMessage(table.challengeMessage, table.channelBindings)
 		assert.Equal(t, table.err, err)
 		if err == nil {
 			assert.Equal(t, table.want, got)
 		}
+		assert.NotNil(t, cm)
+		assert.NotNil(t, am)
 	}
 }
 
@@ -383,8 +385,23 @@ func TestClient(t *testing.T) {
 		}
 
 		authenticate, err := client.Authenticate(table.challenge, cbt)
-		assert.Nil(t, err)
 		assert.Equal(t, table.authenticate, authenticate)
+
+		assert.NotNil(t, client.SessionDetails())
+		assert.NotNil(t, client.SessionDetails().Version)
+		assert.NotEmpty(t, client.SessionDetails().ExportedSessionKey)
+
+		nbComputerNameUTF16, found := client.SessionDetails().TargetInfo.Get(MsvAvNbComputerName)
+		assert.True(t, found)
+		nbComputerName, err := utf16ToString(nbComputerNameUTF16)
+		assert.NoError(t, err)
+		assert.Equal(t, "Server", nbComputerName)
+
+		nbDomainNameUTF16, found := client.SessionDetails().TargetInfo.Get(MsvAvNbDomainName)
+		assert.True(t, found)
+		nbDomainName, err := utf16ToString(nbDomainNameUTF16)
+		assert.NoError(t, err)
+		assert.Equal(t, "Domain", nbDomainName)
 
 		assert.Equal(t, true, client.Complete())
 

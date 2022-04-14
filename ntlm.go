@@ -168,7 +168,7 @@ func lmChallengeResponse(flags uint32, level lmCompatibilityLevel, clientChallen
 		return response, err
 	default:
 		// LMv2 response
-		if _, ok := cm.TargetInfo.Get(msvAvTimestamp); ok {
+		if _, ok := cm.TargetInfo.Get(MsvAvTimestamp); ok {
 			return zeroBytes(24), nil
 		}
 		return lmV2Response(username, password, domain, cm.ServerChallenge[:], clientChallenge)
@@ -205,10 +205,10 @@ func ntChallengeResponse(flags uint32, level lmCompatibilityLevel, clientChallen
 		return response, keyExchangeKey, nil
 	default:
 		// NTLMv2 authentication
-		timestamp, ok := targetInfo.Get(msvAvTimestamp)
+		timestamp, ok := targetInfo.Get(MsvAvTimestamp)
 		if ok {
 			var flags uint32
-			if v, ok := targetInfo.Get(msvAvFlags); ok {
+			if v, ok := targetInfo.Get(MsvAvFlags); ok {
 				flags = binary.LittleEndian.Uint32(v)
 				flags |= msvAvFlagMICProvided
 			} else {
@@ -216,7 +216,7 @@ func ntChallengeResponse(flags uint32, level lmCompatibilityLevel, clientChallen
 			}
 			v := make([]byte, 4)
 			binary.LittleEndian.PutUint32(v, flags)
-			targetInfo.Set(msvAvFlags, v)
+			targetInfo.Set(MsvAvFlags, v)
 		} else {
 			var err error
 			timestamp, err = currentTime()
@@ -230,7 +230,7 @@ func ntChallengeResponse(flags uint32, level lmCompatibilityLevel, clientChallen
 			if err != nil {
 				return nil, nil, err
 			}
-			targetInfo.Set(msvChannelBindings, hashMD5(b))
+			targetInfo.Set(MsvChannelBindings, hashMD5(b))
 		}
 
 		return ntlmV2Response(username, password, domain, cm.ServerChallenge[:], clientChallenge, timestamp, targetInfo)

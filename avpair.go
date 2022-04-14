@@ -10,17 +10,17 @@ import (
 type avID uint16
 
 const (
-	msvAvEOL avID = iota
-	msvAvNbComputerName
-	msvAvNbDomainName
-	msvAvDNSComputerName
-	msvAvDNSDomainName
-	msvAvDNSTreeName
-	msvAvFlags
-	msvAvTimestamp
-	msvAvSingleHost
-	msvAvTargetName
-	msvChannelBindings
+	MsvAvEOL avID = iota
+	MsvAvNbComputerName
+	MsvAvNbDomainName
+	MsvAvDNSComputerName
+	MsvAvDNSDomainName
+	MsvAvDNSTreeName
+	MsvAvFlags
+	MsvAvTimestamp
+	MsvAvSingleHost
+	MsvAvTargetName
+	MsvChannelBindings
 )
 
 const (
@@ -52,7 +52,7 @@ func (t *targetInfo) Get(id avID) ([]uint8, bool) {
 }
 
 func (t *targetInfo) Set(id avID, value []uint8) {
-	if id == msvAvEOL {
+	if id == MsvAvEOL {
 		return
 	}
 	if _, ok := t.Get(id); !ok {
@@ -99,7 +99,7 @@ func (t *targetInfo) Marshal() ([]byte, error) {
 	b := bytes.Buffer{}
 
 	for _, k := range t.Order {
-		if k == msvAvEOL {
+		if k == MsvAvEOL {
 			continue
 		}
 
@@ -113,7 +113,7 @@ func (t *targetInfo) Marshal() ([]byte, error) {
 	}
 
 	// Append required MsvAvEOL pair
-	if err := binary.Write(&b, binary.LittleEndian, &avPair{msvAvEOL, 0}); err != nil {
+	if err := binary.Write(&b, binary.LittleEndian, &avPair{MsvAvEOL, 0}); err != nil {
 		return nil, err
 	}
 
@@ -130,7 +130,7 @@ func (t *targetInfo) Unmarshal(b []byte) error {
 			return err
 		}
 
-		if pair.ID == msvAvEOL {
+		if pair.ID == MsvAvEOL {
 			break
 		}
 

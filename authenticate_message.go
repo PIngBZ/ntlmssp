@@ -46,7 +46,7 @@ type authenticateMessage struct {
 }
 
 func (m *authenticateMessage) UpdateMIC(preamble []byte) error {
-	if v, ok := m.TargetInfo.Get(msvAvFlags); ok {
+	if v, ok := m.TargetInfo.Get(MsvAvFlags); ok {
 		flags := binary.LittleEndian.Uint32(v)
 		if flags&msvAvFlagMICProvided != 0 {
 			// Add an all-zero MIC first

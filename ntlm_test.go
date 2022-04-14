@@ -273,18 +273,18 @@ func TestNTLMv2Temp(t *testing.T) {
 			},
 			targetInfo{
 				map[avID][]uint8{
-					msvAvNbComputerName: {
+					MsvAvNbComputerName: {
 						0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
 						0x65, 0x00, 0x72, 0x00,
 					},
-					msvAvNbDomainName: {
+					MsvAvNbDomainName: {
 						0x44, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00,
 						0x69, 0x00, 0x6e, 0x00,
 					},
 				},
 				[]avID{
-					msvAvNbDomainName,
-					msvAvNbComputerName,
+					MsvAvNbDomainName,
+					MsvAvNbComputerName,
 				},
 			},
 			[]byte{
@@ -335,18 +335,18 @@ func TestNTLMv2Response(t *testing.T) {
 			},
 			targetInfo{
 				map[avID][]uint8{
-					msvAvNbComputerName: {
+					MsvAvNbComputerName: {
 						0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
 						0x65, 0x00, 0x72, 0x00,
 					},
-					msvAvNbDomainName: {
+					MsvAvNbDomainName: {
 						0x44, 0x00, 0x6f, 0x00, 0x6d, 0x00, 0x61, 0x00,
 						0x69, 0x00, 0x6e, 0x00,
 					},
 				},
 				[]avID{
-					msvAvNbDomainName,
-					msvAvNbComputerName,
+					MsvAvNbDomainName,
+					MsvAvNbComputerName,
 				},
 			},
 			[]byte{
@@ -471,12 +471,12 @@ func TestLmChallengeResponse(t *testing.T) {
 				},
 				TargetInfo: targetInfo{
 					map[avID][]uint8{
-						msvAvTimestamp: {
+						MsvAvTimestamp: {
 							0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 						},
 					},
 					[]avID{
-						msvAvTimestamp,
+						MsvAvTimestamp,
 					},
 				},
 			},

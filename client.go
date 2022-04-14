@@ -25,6 +25,14 @@ type Client struct {
 	challengeMessage []byte
 	complete         bool
 	securitySession  *SecuritySession
+	sessionDetails   *sessionDetails
+}
+
+type sessionDetails struct {
+	TargetInfo         targetInfo
+	Version            *Version
+	MIC                []byte
+	ExportedSessionKey []byte
 }
 
 func realClientChallenge() ([]byte, error) {
@@ -136,10 +144,25 @@ func SetVersion(version *Version) func(*Client) error {
 }
 
 func (c *Client) Authenticate(input []byte, bindings *ChannelBindings) ([]byte, error) {
-	if input != nil {
-		return c.processChallengeMessage(input, bindings)
+	if input == nil {
+		return c.newNegotiateMessage()
 	}
-	return c.newNegotiateMessage()
+	parsedChallengeMessage, authMessage, authPayload, err := c.processChallengeMessage(input, bindings)
+	if err != nil {
+		return nil, err
+	}
+	c.sessionDetails = &sessionDetails{
+		TargetInfo:         parsedChallengeMessage.TargetInfo,
+		Version:            parsedChallengeMessage.Version,
+		MIC:                authMessage.MIC,
+		ExportedSessionKey: authMessage.ExportedSessionKey,
+	}
+	return authPayload, nil
+}
+
+// SessionDetails LeakIX patch, makes useful session information available for recon
+func (c *Client) SessionDetails() *sessionDetails {
+	return c.sessionDetails
 }
 
 func (c *Client) newNegotiateMessage() ([]byte, error) {
@@ -164,10 +187,10 @@ func (c *Client) newNegotiateMessage() ([]byte, error) {
 	return b, nil
 }
 
-func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings) ([]byte, error) {
+func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings) (*challengeMessage, *authenticateMessage, []byte, error) {
 	cm := &challengeMessage{}
 	if err := cm.Unmarshal(input); err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	// Store the message bytes in case we need to generate a MIC
@@ -180,12 +203,12 @@ func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings
 
 	clientChallenge, err := generateClientChallenge()
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	targetInfo, err := cm.TargetInfo.Clone()
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	var lmChallengeResponsePayload, ntChallengeResponsePayload, keyExchangeKey []byte
@@ -198,11 +221,11 @@ func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings
 	} else {
 		lmChallengeResponsePayload, err = lmChallengeResponse(c.negotiatedFlags, c.compatibilityLevel, clientChallenge, c.username, c.password, c.domain, cm)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 		ntChallengeResponsePayload, keyExchangeKey, err = ntChallengeResponse(c.negotiatedFlags, c.compatibilityLevel, clientChallenge, c.username, c.password, c.domain, cm, lmChallengeResponsePayload, *targetInfo, bindings)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 	}
 
@@ -211,12 +234,12 @@ func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings
 	if ntlmsspNegotiateKeyExch.IsSet(c.negotiatedFlags) {
 		exportedSessionKey, err = generateExportedSessionKey()
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 
 		encryptedRandomSessionKey, err = encryptRC4K(keyExchangeKey, exportedSessionKey)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 	} else {
 		exportedSessionKey = keyExchangeKey
@@ -225,7 +248,7 @@ func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings
 	if ntlmsspNegotiateSeal.IsSet(c.negotiatedFlags) || ntlmsspNegotiateSign.IsSet(c.negotiatedFlags) {
 		c.securitySession, err = newSecuritySession(c.negotiatedFlags, exportedSessionKey, sourceClient)
 		if err != nil {
-			return nil, err
+			return nil, nil, nil, err
 		}
 	}
 
@@ -247,18 +270,17 @@ func (c *Client) processChallengeMessage(input []byte, bindings *ChannelBindings
 	}
 
 	if err := am.UpdateMIC(concat(c.negotiateMessage, c.challengeMessage)); err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
-
 	b, err := am.Marshal()
 	if err != nil {
-		return nil, err
+		return nil, nil, nil, err
 	}
 
 	// Mark transaction as complete
 	c.complete = true
 
-	return b, nil
+	return cm, am, b, nil
 }
 
 func (c *Client) Complete() bool {

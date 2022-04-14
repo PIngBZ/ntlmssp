@@ -6,6 +6,8 @@ import (
 	"encoding/binary"
 	"errors"
 	"fmt"
+	"github.com/LeakIX/ntlmssp"
+	"github.com/hashicorp/go-cleanhttp"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -13,8 +15,6 @@ import (
 	"net/textproto"
 	"net/url"
 	"strings"
-
-	"github.com/LeakIX/ntlmssp"
 )
 
 var (
@@ -159,7 +159,8 @@ func (c *Client) unwrap(resp *http.Response) error {
 
 		resp.Body = ioutil.NopCloser(bytes.NewBuffer(body))
 		resp.Header.Set(contentTypeHeader, newContentType)
-		resp.Header.Set("Content-Length", string(len(body)))
+
+		resp.Header.Set("Content-Length", fmt.Sprint(len(body)))
 	}
 
 	return nil
