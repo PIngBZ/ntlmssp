@@ -128,6 +128,15 @@ func (s *SecuritySession) Unwrap(b, signature []byte) ([]byte, error) {
 	}
 }
 
+func (s *SecuritySession) Mac(b []byte) ([]byte, error) {
+	mac, err := calculateSignature(b, s.negotiateFlags, s.outgoingSigningKey, s.outgoingSeqNum, s.outgoingHandle)
+	if err != nil {
+		return mac, err
+	}
+	s.outgoingSeqNum++
+	return mac, nil
+}
+
 func signKey(exportedSessionKey, constant []byte) []byte {
 	return hashMD5(concat(exportedSessionKey, constant))
 }
