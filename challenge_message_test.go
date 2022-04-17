@@ -50,7 +50,7 @@ func TestChallengeMessageUnmarshal(t *testing.T) {
 				},
 				TargetName: "Server",
 				TargetInfo: targetInfo{
-					map[avID][]uint8{
+					map[AvID][]uint8{
 						MsvAvNbComputerName: {
 							0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
 							0x65, 0x00, 0x72, 0x00,
@@ -60,7 +60,7 @@ func TestChallengeMessageUnmarshal(t *testing.T) {
 							0x69, 0x00, 0x6e, 0x00,
 						},
 					},
-					[]avID{
+					[]AvID{
 						MsvAvNbDomainName,
 						MsvAvNbComputerName,
 					},
@@ -216,7 +216,7 @@ func TestChallengeMessageMarshal(t *testing.T) {
 				},
 				TargetName: "Server",
 				TargetInfo: targetInfo{
-					map[avID][]uint8{
+					map[AvID][]uint8{
 						MsvAvNbComputerName: {
 							0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
 							0x65, 0x00, 0x72, 0x00,
@@ -226,7 +226,7 @@ func TestChallengeMessageMarshal(t *testing.T) {
 							0x69, 0x00, 0x6e, 0x00,
 						},
 					},
-					[]avID{
+					[]AvID{
 						MsvAvNbComputerName,
 						MsvAvNbDomainName,
 					},
@@ -276,7 +276,7 @@ func TestChallengeMessageMarshal(t *testing.T) {
 				},
 				TargetName: "Server",
 				TargetInfo: targetInfo{
-					map[avID][]uint8{
+					map[AvID][]uint8{
 						MsvAvNbComputerName: {
 							0x53, 0x00, 0x65, 0x00, 0x72, 0x00, 0x76, 0x00,
 							0x65, 0x00, 0x72, 0x00,
@@ -286,7 +286,7 @@ func TestChallengeMessageMarshal(t *testing.T) {
 							0x69, 0x00, 0x6e, 0x00,
 						},
 					},
-					[]avID{
+					[]AvID{
 						MsvAvNbComputerName,
 						MsvAvNbDomainName,
 					},

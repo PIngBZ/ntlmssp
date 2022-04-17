@@ -7,10 +7,10 @@ import (
 	"fmt"
 )
 
-type avID uint16
+type AvID uint16
 
 const (
-	MsvAvEOL avID = iota
+	MsvAvEOL AvID = iota
 	MsvAvNbComputerName
 	MsvAvNbDomainName
 	MsvAvDNSComputerName
@@ -30,28 +30,41 @@ const (
 )
 
 type avPair struct {
-	ID     avID
+	ID     AvID
 	Length uint16
 }
 
 type targetInfo struct {
-	Pairs map[avID][]uint8
-	Order []avID
+	Pairs map[AvID][]uint8
+	Order []AvID
 }
 
 func newTargetInfo() targetInfo {
 	return targetInfo{
-		Pairs: make(map[avID][]uint8),
-		Order: []avID{},
+		Pairs: make(map[AvID][]uint8),
+		Order: []AvID{},
 	}
 }
 
-func (t *targetInfo) Get(id avID) ([]uint8, bool) {
+func (t *targetInfo) Get(id AvID) ([]uint8, bool) {
 	v, ok := t.Pairs[id]
 	return v, ok
 }
 
-func (t *targetInfo) Set(id avID, value []uint8) {
+func (t *targetInfo) GetString(id AvID) (string, bool) {
+	v, ok := t.Get(id)
+	if !ok {
+		return "", ok
+	}
+	utf8String, err := utf16ToString(v)
+	if err != nil {
+		// not utf16 and not empty, casting
+		return string(v), ok
+	}
+	return utf8String, ok
+}
+
+func (t *targetInfo) Set(id AvID, value []uint8) {
 	if id == MsvAvEOL {
 		return
 	}
@@ -61,7 +74,7 @@ func (t *targetInfo) Set(id avID, value []uint8) {
 	t.Pairs[id] = value
 }
 
-func (t *targetInfo) Del(id avID) {
+func (t *targetInfo) Del(id AvID) {
 	delete(t.Pairs, id)
 	j := 0
 	for _, n := range t.Order {
