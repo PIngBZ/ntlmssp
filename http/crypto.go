@@ -5,7 +5,7 @@ import (
 	"crypto/x509"
 	"hash"
 
-	"github.com/LeakIX/ntlmssp"
+	"github.com/PIngBZ/ntlmssp"
 )
 
 func signatureAlgorithmHash(algo x509.SignatureAlgorithm) crypto.Hash {

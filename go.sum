@@ -1,5 +1,3 @@
-github.com/bodgit/ntlmssp v0.0.0-20231106151141-9c8ca384e779 h1:G5A5PWIW8cxeROezDOwsSDrWKVQgGPJjNY6z7/sP/nM=
-github.com/bodgit/ntlmssp v0.0.0-20231106151141-9c8ca384e779/go.mod h1:JTsuaH4GfVMygSKlsvcdGdko5KpoSSnWCAykYfBRHhY=
 github.com/bodgit/windows v1.0.1 h1:tF7K6KOluPYygXa3Z2594zxlkbKPAOvqr97etrGNIz4=
 github.com/bodgit/windows v1.0.1/go.mod h1:a6JLwrB4KrTR5hBpp8FI9/9W9jJfeQ2h4XDXU74ZCdM=
 github.com/davecgh/go-spew v1.1.1 h1:vj9j/u1bqnvCEfJOwUhtlOARqs3+rkHYY13jYWTU97c=

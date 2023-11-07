@@ -1,9 +1,8 @@
-module github.com/LeakIX/ntlmssp
+module github.com/PIngBZ/ntlmssp
 
 go 1.18
 
 require (
-	github.com/bodgit/ntlmssp v0.0.0-20231106151141-9c8ca384e779
 	github.com/bodgit/windows v1.0.1
 	github.com/go-logr/logr v1.3.0
 	github.com/hashicorp/go-cleanhttp v0.5.2

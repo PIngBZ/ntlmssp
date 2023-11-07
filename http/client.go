@@ -14,12 +14,10 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/LeakIX/ntlmssp"
+	"github.com/PIngBZ/ntlmssp"
 	"github.com/hashicorp/go-cleanhttp"
 
-	"github.com/bodgit/ntlmssp"
 	"github.com/go-logr/logr"
-	"github.com/hashicorp/go-cleanhttp"
 )
 
 var (
