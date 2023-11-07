@@ -1,6 +1,6 @@
 module github.com/PIngBZ/ntlmssp
 
-go 1.18
+go 1.21
 
 require (
 	github.com/bodgit/windows v1.0.1
